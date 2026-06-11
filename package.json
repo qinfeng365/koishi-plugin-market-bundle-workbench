@@ -1,0 +1,78 @@
+{
+  "name": "koishi-plugin-market-bundle-workbench",
+  "version": "0.1.0-alpha.0",
+  "description": "Plugin bundle authoring workbench for Koishi Market NEXT.",
+  "homepage": "https://github.com/qinfeng365/koishi-plugin-market-bundle-workbench#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qinfeng365/koishi-plugin-market-bundle-workbench.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qinfeng365/koishi-plugin-market-bundle-workbench/issues"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node build.mjs",
+    "build:dts": "tsc -p tsconfig.json",
+    "build:js": "node build.mjs",
+    "check:package": "npm pack --dry-run"
+  },
+  "files": [
+    "lib",
+    "dist",
+    "src",
+    "client",
+    "README.md"
+  ],
+  "keywords": [
+    "koishi",
+    "plugin",
+    "market",
+    "bundle",
+    "package"
+  ],
+  "license": "AGPL-3.0",
+  "koishi": {
+    "public": [
+      "dist"
+    ],
+    "description": {
+      "en": "Koishi plugin bundle authoring workbench",
+      "zh": "Koishi 插件包制作与发布工作台"
+    },
+    "service": {
+      "optional": [
+        "console",
+        "config",
+        "market"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@koishijs/plugin-console": "^5.30.11",
+    "koishi": "^4.18.11",
+    "koishi-plugin-market-next": "^3.5.7-alpha.0"
+  },
+  "peerDependenciesMeta": {
+    "@koishijs/plugin-console": {
+      "optional": true
+    },
+    "koishi-plugin-market-next": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@koishijs/client": "^5.30.11",
+    "@koishijs/console": "^5.30.11",
+    "execa": "^5.1.1",
+    "fflate": "^0.8.3",
+    "semver": "^7.6.3"
+  },
+  "devDependencies": {
+    "@koishijs/plugin-config": "^2.8.6",
+    "@types/semver": "^7.5.8",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.6.2"
+  }
+}
