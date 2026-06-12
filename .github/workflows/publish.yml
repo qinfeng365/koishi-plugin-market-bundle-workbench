@@ -59,8 +59,16 @@ jobs:
       - name: Publish to npm
         run: |
           PACKAGE_NAME=$(node -p "require('./package.json').name")
-          if [[ "${PACKAGE_NAME}" == @* ]]; then
-            npm publish --provenance --access public
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          # Extract prerelease label (e.g. "alpha" from "0.2.0-alpha.0").
+          if [[ "${PACKAGE_VERSION}" =~ -([0-9A-Za-z]+) ]]; then
+            NPM_TAG="${BASH_REMATCH[1]}"
           else
-            npm publish --provenance
+            NPM_TAG="latest"
+          fi
+          echo "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} with --tag ${NPM_TAG}"
+          if [[ "${PACKAGE_NAME}" == @* ]]; then
+            npm publish --provenance --access public --tag "${NPM_TAG}"
+          else
+            npm publish --provenance --tag "${NPM_TAG}"
           fi
