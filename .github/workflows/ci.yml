@@ -3,26 +3,28 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - master
+      - '**'
+    tags-ignore:
+      - '**'
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  verify:
+    name: Build and pack
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: '24'
+          package-manager-cache: false
 
       - name: Install dependencies
         run: npm ci
@@ -30,5 +32,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Check package
+      - name: Check package contents
         run: npm run check:package
