@@ -5,3 +5,10 @@ dist/
 *.log
 tsconfig.tsbuildinfo
 .DS_Store
+
+# Local development artifacts (not project body)
+docs/superpowers/
+.claude/
+.vscode/
+.idea/
+*.local

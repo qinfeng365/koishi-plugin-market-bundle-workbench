@@ -1,0 +1,27 @@
+// Workbench-local design tokens. Inherits Koishi console CSS variables
+// (--k-color-*, --fg1/2/3, --k-card-bg, --k-side-bg, --k-color-border).
+// Only adds spacing/border helpers; never introduces a new brand color.
+
+:root {
+  --bw-gap-xs: 0.35rem;
+  --bw-gap-sm: 0.5rem;
+  --bw-gap-md: 0.75rem;
+  --bw-gap-lg: 1rem;
+  --bw-gap-xl: 1.4rem;
+
+  --bw-radius: 6px;
+  --bw-radius-sm: 4px;
+
+  --bw-border: 1px solid color-mix(in srgb, var(--k-color-border) 70%, transparent);
+  --bw-border-strong: 1px solid color-mix(in srgb, var(--k-color-border) 95%, transparent);
+  --bw-border-soft: 1px solid color-mix(in srgb, var(--k-color-border) 45%, transparent);
+
+  --bw-bg-soft: color-mix(in srgb, var(--k-card-bg) 88%, transparent);
+  --bw-bg-elev: color-mix(in srgb, var(--k-side-bg) 60%, var(--k-card-bg));
+
+  --bw-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  --bw-step-size: 1.4rem;
+}
