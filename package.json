@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-market-bundle-workbench",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "description": "Plugin bundle authoring workbench for Koishi Market NEXT.",
   "homepage": "https://github.com/qinfeng365/koishi-plugin-market-bundle-workbench#readme",
   "repository": {
