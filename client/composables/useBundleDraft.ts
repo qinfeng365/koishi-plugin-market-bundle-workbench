@@ -26,12 +26,38 @@ export interface MemberView {
   autoPlugin: boolean
 }
 
+export interface InstalledOption {
+  name: string
+  shortname: string
+  version: string
+  label: string
+  description: string
+  hasSchema: boolean
+  added: boolean
+  verified: boolean
+  insecure: boolean
+  deprecated: boolean
+  category?: string
+}
+
 function packagesIndex() {
   return ((store as any).packages ?? {}) as Record<string, any>
 }
 
 function marketIndex() {
   return ((store as any).market?.data ?? {}) as Record<string, any>
+}
+
+function pickDescription(value: unknown) {
+  if (typeof value === 'string') return value.trim()
+  if (!value || typeof value !== 'object') return ''
+  const object = value as Record<string, unknown>
+  for (const key of ['zh-CN', 'zh', 'en-US', 'en']) {
+    const text = object[key]
+    if (typeof text === 'string' && text.trim()) return text.trim()
+  }
+  const fallback = Object.values(object).find(item => typeof item === 'string' && item.trim())
+  return typeof fallback === 'string' ? fallback.trim() : ''
 }
 
 export function useBundleDraft() {
@@ -49,14 +75,31 @@ export function useBundleDraft() {
   const packageNameOk = computed(() => isBundlePackageName(draft.packageName))
   const presetCount = computed(() => members.filter(hasPresetConfig).length)
 
-  const installedOptions = computed(() => {
+  const installedOptions = computed<InstalledOption[]>(() => {
     return Object.values(packagesIndex())
       .filter((item: any) => isPluginPackageName(item?.package?.name))
-      .sort((a: any, b: any) => a.package.name.localeCompare(b.package.name))
-      .map((item: any) => ({
-        name: item.package.name,
-        label: `${item.package.name}@${item.package.version}`,
-      }))
+      .map((item: any) => {
+        const name = normalizePackageName(item.package.name)
+        const market = marketIndex()[name]
+        const version = item.package.version || ''
+        const displayName = shortname(name)
+        return {
+          name,
+          shortname: displayName,
+          version,
+          label: `${displayName} · ${name}@${version}`,
+          description: pickDescription(market?.manifest?.description)
+            || pickDescription(item.package.description)
+            || '没有本地描述。',
+          hasSchema: !!item.runtime?.schema,
+          added: members.some(member => member.package === name),
+          verified: !!market?.verified,
+          insecure: !!market?.insecure,
+          deprecated: !!market?.deprecated,
+          category: market?.category,
+        }
+      })
+      .sort((a, b) => a.shortname.localeCompare(b.shortname))
   })
 
   function packageInfo(name: string): any {
@@ -79,12 +122,12 @@ export function useBundleDraft() {
     return [...collectSensitiveKeys(member.configObject)].slice(0, 8)
   }
 
-  function addMember(name: string, version?: string) {
+  function addMember(name: string, version?: string, silent = false) {
     const packageName = normalizePackageName(name)
-    if (!packageName) return
+    if (!packageName) return false
     if (members.some(member => member.package === packageName)) {
-      message.warning('这个成员已经在列表中。')
-      return
+      if (!silent) message.warning('这个成员已经在列表中。')
+      return false
     }
     members.push({
       id: createId(),
@@ -96,6 +139,18 @@ export function useBundleDraft() {
       configObject: {},
       autoPlugin: true,
     })
+    return true
+  }
+
+  function addMembers(names: string[]) {
+    let added = 0
+    let skipped = 0
+    for (const name of [...new Set(names.map(normalizePackageName).filter(Boolean))]) {
+      if (addMember(name, undefined, true)) added += 1
+      else skipped += 1
+    }
+    if (added) message.success(`已加入 ${added} 个成员。`)
+    else if (skipped) message.warning('选择的插件都已经在成员列表中。')
   }
 
   function removeMember(index: number) {
@@ -210,6 +265,7 @@ export function useBundleDraft() {
     hasPresetConfig,
     sensitiveKeys,
     addMember,
+    addMembers,
     removeMember,
     moveMember,
     syncPluginKey,

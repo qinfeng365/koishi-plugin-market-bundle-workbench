@@ -1,0 +1,12 @@
+node_modules/
+*.tgz
+*.log
+tsconfig.tsbuildinfo
+.DS_Store
+
+# Local development artifacts
+docs/superpowers/
+.claude/
+.vscode/
+.idea/
+*.local
